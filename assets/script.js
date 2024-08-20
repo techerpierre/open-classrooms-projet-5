@@ -14,7 +14,8 @@ const slides = [
 	{
 		"image":"slide4.png",
 		"tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
-	}
+	},
+	
 ];
 
 const banner = document.getElementById("banner");
@@ -23,6 +24,10 @@ const bannerTagline = banner.querySelector("p");
 const bannerDots = banner.querySelector("#bannerDots");
 const next = banner.querySelector("#next");
 const back = banner.querySelector("#back");
+
+let current = 0;
+let interval;
+let isHoveringSlider = false;
 
 function setSlider(index) {
 	const slide = slides[index];
@@ -36,41 +41,62 @@ function setSlider(index) {
 	})
 }
 
-for (let i = 0; i < slides.length; i++) {
-	const span = document.createElement("span");
-	span.classList.add("dot");
-	bannerDots.appendChild(span);
+function handleSliderIncrementation(factor) {
+	let index = 0;
+	if (factor > 0 && current < slides.length - 1)
+		index = ++current;
+	else if (factor < 0 && current > 0)
+		index = --current;
+	else
+		index = current = (factor > 0? 0 : slides.length-1);
+	setSlider(index);
 }
 
-let current = 0;
+function handle_interval() {
+	if (interval)
+		clearInterval(interval)
+	if (!isHoveringSlider) {
+		interval = setInterval(() => {
+			handleSliderIncrementation(1)
+		}, 5000)
+	}
+}
 
-setSlider(current);
+function initSlider() {
+	for (let i = 0; i < slides.length; i++) {
+		const span = document.createElement("span");
+		span.classList.add("dot");
+		span.addEventListener("click", () => {
+			current = i;
+			setSlider(current);
+		})
+		bannerDots.appendChild(span);
+	}
+
+	setSlider(current);
+}	
 
 document.addEventListener("DOMContentLoaded", () => {
-	setInterval(() => {
-		let index = 0;
-		if (current < slides.length - 1)
-			index = ++current;
-		else
-			index = current = 0;
-		setSlider(index);
-	}, 5000);
+	initSlider()
+	handle_interval()
 });
 
+banner.addEventListener("mouseenter", () => {
+	isHoveringSlider = true;
+	handle_interval()
+})
+
+banner.addEventListener("mouseleave", () => {
+	isHoveringSlider = false;
+	handle_interval()
+})
+
 next.addEventListener("click", () => {
-	let index = 0;
-	if (current < slides.length - 1)
-		index = ++current;
-	else
-		index = current = 0;
-	setSlider(index);
+	handleSliderIncrementation(1)
+	handle_interval()
 });
 
 back.addEventListener("click", () => {
-	let index = 0;
-	if (current > 0)
-		index = --current;
-	else
-		index = current = slides.length-1;
-	setSlider(index);
+	handleSliderIncrementation(-1)
+	handle_interval()
 });
