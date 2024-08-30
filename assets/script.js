@@ -32,7 +32,7 @@ let isHoveringSlider = false;
 function setSlider(index) {
 	const slide = slides[index];
 	bannerTagline.innerHTML = slide.tagLine;
-	bannerImg.src = `/assets/images/slideshow/${slide.image}`;
+	bannerImg.src = `../assets/images/slideshow/${slide.image}`;
 	const dots = bannerDots.querySelectorAll("span");
 	dots[index].classList.add("dot_selected");
 	dots.forEach((_, i) => {
