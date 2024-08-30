@@ -58,7 +58,7 @@ function handle_interval() {
 	if (!isHoveringSlider) {
 		interval = setInterval(() => {
 			handleSliderIncrementation(1)
-		}, 5000)
+		}, 5000);
 	}
 }
 
